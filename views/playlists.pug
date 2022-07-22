@@ -4,6 +4,7 @@ html
 		title User Playlists
 	body
 		h1 View your playlists
+		h2 YouTube Playlists
 		each playlistData in youtubePlaylistData
 			- 
 				var playlist = playlistData.snippet;
@@ -11,3 +12,11 @@ html
 			img(src=thumbnail.url width=thumbnail.width height=thumbnail.height)
 			h3= playlist["title"]
 			hr
+
+		h2 Spotify Playlists
+		each playlistData in spotifyPlaylistData
+			-
+				var imgs = playlistData.images;
+				var thumbnail = imgs[0];
+			img(src=thumbnail.url width=300 height=300)
+			h3= playlistData["name"]
