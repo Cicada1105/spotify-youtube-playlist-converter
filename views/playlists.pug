@@ -1,0 +1,13 @@
+DOCTYPE(lang="en")
+html
+	head
+		title User Playlists
+	body
+		h1 View your playlists
+		each playlistData in playlistsData
+			- 
+				var playlist = playlistData.snippet;
+				var thumbnail = playlist.thumbnails["medium"];
+			img(src=thumbnail.url width=thumbnail.width height=thumbnail.height)
+			h3= playlist["title"]
+			hr
