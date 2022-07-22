@@ -1,16 +1,17 @@
 const express = require("express");
-const pug = require("pug");
-// Create express router
-const Router = express.Router();
 const axios = require("axios");
 // Include querystring to allow for easy parameter creation
 const qs = require("querystring");
 
-const API_URL = "https://youtube.googleapis.com/youtube/v3/playlists";
+// Create express router
+const Router = express.Router();
+
+// Urls
 const AUTHORIZATION_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth";
 const REDIRECT_URI = "http://localhost:8080/youtube/authorize";
 const SCOPES = "https://www.googleapis.com/auth/youtube.force-ssl";
 
+// State - random string to prevent any man in the middle attacks
 const STATE = "D8E4js82-smc-fdj24DFLIHA";
 
 let accessToken, code;
@@ -29,29 +30,6 @@ Router.get("/authorize",(req,res) => {
 	else
 		getAccessToken(res);
 });
-// Router.get("/playlists",async function(req,res) {
-// 	let playlistsData = await retrievePlaylists();
-// 	const compiledPug = pug.compileFile("./views/playlists.pug");
-
-// 	res.send(compiledPug({ playlistsData: playlistsData.data.items }));
-// });
-
-// async function retrievePlaylists(res) {
-// 	let params = {
-// 		part: "id,snippet,contentDetails,localizations,player,status",
-// 		mine:true,
-// 		key: process.env.API_KEY
-// 	}
-// 	let formattedParams = qs.stringify(params);
-
-// 	let playlistData = await axios.get(`${API_URL}?${formattedParams}`,{
-// 		headers: {
-// 			"Authorization": `Bearer ${accessToken}`,
-// 			"Accept": "application/json"
-// 		}
-// 	});
-// 	return playlistData;
-// }
 function startAuthorizing(res) {
 	let params = {
 		client_id: process.env.CLIENT_ID,
@@ -89,7 +67,7 @@ function getAccessToken(res) {
 		// Reset code
 		code = null;
 		// Redirect to spotify login
-		res.redirect("/spotify/playlists");
+		res.redirect("/spotify/login");
 	}).catch((err) => {
 		console.log(err);
 		res.end();

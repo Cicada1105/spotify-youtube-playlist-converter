@@ -4,7 +4,7 @@ html
 		title User Playlists
 	body
 		h1 View your playlists
-		each playlistData in playlistsData
+		each playlistData in youtubePlaylistData
 			- 
 				var playlist = playlistData.snippet;
 				var thumbnail = playlist.thumbnails["medium"];
