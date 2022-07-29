@@ -31,13 +31,15 @@ app.get("/",(req,res) => {
 });
 
 // Require External Routers
-const YouTubeRouter = require("./routes/youtube.js");
-const SpotifyRouter = require("./routes/spotify.js");
-const PlaylistsRouter = require("./routes/playlists.js");
+// const YouTubeRouter = require("./routes/youtube.js");
+// const SpotifyRouter = require("./routes/spotify.js");
+// const PlaylistsRouter = require("./routes/playlists.js");
 // Define base url for routes
-app.use("/youtube",YouTubeRouter);
-app.use("/spotify",SpotifyRouter);
-app.use("/my-playlists",PlaylistsRouter);
+// app.use("/youtube",YouTubeRouter);
+// app.use("/spotify",SpotifyRouter);
+// app.use("/my-playlists",PlaylistsRouter);
+const Router = require("./routes/");
+app.use("/",Router);
 
 app.listen(PORT,HOST,() => {
 	console.log(`Listening at: http://${HOST}:${PORT}`);

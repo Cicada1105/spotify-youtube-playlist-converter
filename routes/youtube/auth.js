@@ -8,7 +8,7 @@ const Router = express.Router();
 
 // Urls
 const AUTHORIZATION_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth";
-const REDIRECT_URI = "http://localhost:8080/youtube/authorize";
+const REDIRECT_URI = "http://localhost:8080/youtube/auth/authorize";
 const SCOPES = "https://www.googleapis.com/auth/youtube.force-ssl";
 
 // State - random string to prevent any man in the middle attacks
@@ -21,7 +21,7 @@ Router.get("/login",(req,res) => {
 		startAuthorizing(res);
 	else // Access token already obtained
 		// Redirect to spotify login
-		res.redirect("/spotify/login");
+		res.redirect("/spotify/auth/login");
 });
 Router.get("/authorize",(req,res) => {
 	if (req.query.code) {
@@ -70,7 +70,7 @@ function getAccessToken(res) {
 		// Reset code
 		code = null;
 		// Redirect to spotify login
-		res.redirect("/spotify/login");
+		res.redirect("/spotify/auth/login");
 	}).catch((err) => {
 		console.log(err);
 		res.end();

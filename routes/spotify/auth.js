@@ -9,7 +9,7 @@ const Router = express.Router();
 // Urls
 const AUTHORIZATION_ENDPOINT = "https://accounts.spotify.com/authorize";
 const TOKEN_SERVER = "https://accounts.spotify.com/api/token";
-const REDIRECT_URI = "http://localhost:8080/spotify/authorize";
+const REDIRECT_URI = "http://localhost:8080/spotify/auth/authorize";
 const SCOPES = "playlist-modify-public"
 
 // State - random string to prevent any man in the middle attacks
