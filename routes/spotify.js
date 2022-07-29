@@ -20,6 +20,9 @@ let accessToken, code;
 Router.get("/login", (req,res) => {
 	if (accessToken === undefined)
 		startAuthorizing(res);
+	else // Access token already obtained
+		// Redirect to playlists
+		res.redirect("/my-playlists");
 });
 Router.get("/authorize", (req,res) => {
 	if (req.query.code)

@@ -19,6 +19,9 @@ let accessToken, code;
 Router.get("/login",(req,res) => {
 	if (accessToken === undefined)
 		startAuthorizing(res);
+	else // Access token already obtained
+		// Redirect to spotify login
+		res.redirect("/spotify/login");
 });
 Router.get("/authorize",(req,res) => {
 	if (req.query.code) {

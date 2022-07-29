@@ -1,22 +1,29 @@
-DOCTYPE(lang="en")
-html
+doctype html
+html(lang="en")
 	head
+		link(rel="stylesheet",type="text/css",href="/index.css")
+		script(src="https://kit.fontawesome.com/de38352bbc.js" crossorigin="anonymous")
+			
 		title User Playlists
 	body
 		h1 View your playlists
-		h2 YouTube Playlists
-		each playlistData in youtubePlaylistData
-			- 
-				var playlist = playlistData.snippet;
-				var thumbnail = playlist.thumbnails["medium"];
-			img(src=thumbnail.url width=thumbnail.width height=thumbnail.height)
-			h3= playlist["title"]
-			hr
 
-		h2 Spotify Playlists
-		each playlistData in spotifyPlaylistData
-			-
-				var imgs = playlistData.images;
-				var thumbnail = imgs[0];
-			img(src=thumbnail.url width=300 height=300)
-			h3= playlistData["name"]
+		include components/playlist.pug
+
+		div(class="playlists")
+			section(class="youtube-playlists")
+				h2 YouTube Playlists
+				each playlistData in youtubePlaylistData
+					- 
+						var playlist = playlistData.snippet;
+						var thumbnail = playlist.thumbnails["medium"];
+					+playlist({ ...thumbnail, alt: playlist["title"] }, playlist["title"])(class = "youtube-playlist")
+					hr
+			section(class="spotify-playlists")
+				h2 Spotify Playlists
+				each playlistData in spotifyPlaylistData
+					-
+						var imgs = playlistData.images;
+						var thumbnail = imgs[0];
+					+playlist({ url:thumbnail.url, alt:title, width:300, height:300}, playlistData["name"])(class = "spotify-playlist")
+					hr

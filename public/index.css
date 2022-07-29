@@ -1,0 +1,33 @@
+html, body {
+	margin: 0px;
+	padding: 0px;
+}
+div.playlists {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-around;
+}
+section[class $= "playlists"] {
+	display: inline-block;
+	text-align: center;
+	width: 30vw;
+}
+article[class $= "playlist"] {
+	position: relative;
+	width: inherit;
+	margin: 4rem 0rem;
+}
+article[class $= "playlist"]:nth-of-type(1) {
+	margin-top: 0rem;
+}
+img.playlist-cover__img {
+	margin-bottom: 1rem;
+}
+div.control {
+	display: inline-block;
+	width: min-content;
+	margin: 0rem 2rem;
+}
+div.control > a {
+	display: block;
+}

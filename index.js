@@ -21,6 +21,7 @@ app.set("view engine","pug");
 
 // Middleware
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname,"public")));
 
 // Home navigation
 app.get("/",(req,res) => {
