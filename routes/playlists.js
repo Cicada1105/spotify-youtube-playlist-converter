@@ -16,7 +16,6 @@ var youtubePlaylistData, spotifyPlaylistData;
 
 // Pass in array of middlewares to handle requests to YouTube and Spotify APIs
 Router.get("/", [retrieveYouTubePlaylists, retrieveSpotifyPlaylists], (req,res) => {
-	// let playlistsData = await retrievePlaylists();
 	const compiledPug = pug.compileFile("./views/playlists.pug");
 
 	res.send(compiledPug({ 

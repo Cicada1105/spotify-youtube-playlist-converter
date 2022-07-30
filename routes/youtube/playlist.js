@@ -18,7 +18,7 @@ Router.get("/",(req,res) => {
 	{
 		title:"Playlist Title",
 		description:"Playlist Description",
-		videoTitles: [ "Video Title 1", "Video Title 2", ... ]
+		songTitles: [ "Song Title 1", "Song Title 2", ... ]
 	}
 */
 Router.post("/create-playlist",[createPlaylist,buildYouTubePlayList,addToPlaylist],(req,res) => {
@@ -52,7 +52,7 @@ async function createPlaylist(req,res,next) {
 	req.body["title"] = undefined;
 	req.body["description"] = undefined;
 	// Update request body to hold the newly created playlist id
-	req.body.playlistId = newlyCreatePlaylist["id"];
+	req.body["playlistId"] = newlyCreatePlaylist["id"];
 
 	// Proceed to next middleware
 	next();
@@ -61,7 +61,7 @@ async function createPlaylist(req,res,next) {
 // Middleware function that takes body array of song titles, searches youtube, 
 //	and creates an array of youtube videos matching respective song titles
 async function buildYouTubePlayList(req,res,next) {
-	let songTitles = req.body.songTitles;
+	let songTitles = req.body["songTitles"];
 
 	let params = {
 		part: "snippet",
@@ -73,9 +73,9 @@ async function buildYouTubePlayList(req,res,next) {
 
 	let newPlaylist = [];
 
-	for (let songTitle of songTitles) {
+	for (let title of songTitles) {
 		// Update query parameter to the current song title
-		params["q"] = songTitle;
+		params["q"] = title;
 
 		formattedParams = qs.stringify(params);
 

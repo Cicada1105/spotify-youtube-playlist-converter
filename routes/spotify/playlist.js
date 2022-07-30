@@ -20,7 +20,7 @@ Router.get("/",(req,res) => {
 	{
 		title:"Playlist Title",
 		description:"Playlist Description",
-		videoTitles: [ "Video Title 1", "Video Title 2", ... ]
+		songTitles: [ "Video Title 1", "Video Title 2", ... ]
 	}
 */
 Router.post("/create-playlist",[createPlaylist,buildSpotifyPlaylist,addToPlaylist],(req,res) => {
@@ -47,14 +47,14 @@ async function createPlaylist(req,res,next) {
 	req.body["description"] = undefined;
 	// Retrieve newly added playlist and store id
 	let newPlaylist = response.data;
-	req.body.playlistId = newPlaylist["id"];
+	req.body["playlistId"] = newPlaylist["id"];
 
 	// Continue on to next function
 	next();
 }
 
 async function buildSpotifyPlaylist(req,res,next) {
-	let videoTitles = req.body["videoTitles"];
+	let songTitles = req.body["songTitles"];
 
 	let params = {
 		limit: 5,
@@ -64,7 +64,7 @@ async function buildSpotifyPlaylist(req,res,next) {
 	let formattedParams;
 	let newPlaylist = [];
 
-	for (let title of videoTitles) {
+	for (let title of songTitles) {
 		params['q'] = title;
 		formattedParams = qs.stringify(params);
 
@@ -83,9 +83,9 @@ async function buildSpotifyPlaylist(req,res,next) {
 	}
 
 	// Remove video titles from request body
-	req.body["videoTitles"] = undefined;
+	req.body["songTitles"] = undefined;
 	// Store newly created playlist to request body
-	req.body.videos = newPlaylist;
+	req.body.songUris = newPlaylist;
 
 	// Continue on to next function
 	next();
@@ -94,7 +94,7 @@ async function buildSpotifyPlaylist(req,res,next) {
 async function addToPlaylist(req,res,next) {
 	// Retrieve id and array of song URIs to add to the playlist specfied by passed in id
 	let playlistId = req.body["playlistId"];
-	let songUris = req.body["videos"];
+	let songUris = req.body["songUris"];
 
 	await axios.post(`${PLAYLIST_API_URL}/${playlistId}/tracks`,{
 		uris: songUris
