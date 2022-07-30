@@ -18,7 +18,7 @@ const STATE = "cjPekA39=dnjkl3SK-d3fdsa3GA$";
 let accessToken, code;
 
 Router.get("/login", (req,res) => {
-	if (accessToken === undefined)
+	if ((accessToken === undefined) && (req.cookies["spotify-access-token"] === undefined))
 		startAuthorizing(res);
 	else // Access token already obtained
 		// Redirect to playlists
