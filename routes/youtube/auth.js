@@ -17,7 +17,7 @@ const STATE = "D8E4js82-smc-fdj24DFLIHA";
 let accessToken, code;
 
 Router.get("/login",(req,res) => {
-	if (accessToken === undefined)
+	if ((accessToken === undefined) && (req.cookies["youtube-access-token"] === undefined))
 		startAuthorizing(res);
 	else // Access token already obtained
 		// Redirect to spotify login
@@ -38,6 +38,7 @@ function startAuthorizing(res) {
 		client_id: process.env.CLIENT_ID,
 		redirect_uri: REDIRECT_URI,
 		response_type: "code",
+		access_type:"offline",
 		scope: SCOPES,
 		state: STATE
 	}
@@ -63,8 +64,12 @@ function getAccessToken(res) {
 			"Content-Type": "application/x-www-form-urlencoded"
 		}
 	}).then((response) => {
+		let tokenData = response.data;
 		// Set access token locally for any possible future access
-		accessToken = response.data.access_token;
+		accessToken = tokenData["access_token"];
+		let expiry = tokenData["expires_in"];
+		let refreshToken = tokenData["refresh_token"];
+
 		// Store in cookie as well to access after redirection
 		res.cookie("youtube-access-token",accessToken);
 		// Reset code

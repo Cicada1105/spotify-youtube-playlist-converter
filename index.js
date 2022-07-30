@@ -1,5 +1,6 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 const path = require("path");
 const pug = require("pug");
 
@@ -22,6 +23,8 @@ app.set("view engine","pug");
 // Middleware
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname,"public")));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // Home navigation
 app.get("/",(req,res) => {
