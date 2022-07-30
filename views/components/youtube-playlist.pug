@@ -1,0 +1,12 @@
+mixin youtubePlaylist(img,title,description,playlistId)
+	article(class!=attributes.class)
+		h3= title
+		img(class="playlist-cover__img" src=img.url alt=img.alt width=img.width height=img.height)
+		div(class="controls")
+			div(class="control")
+				i(class="fa-solid fa-arrow-right-arrow-left")
+				- var actionStr = `/youtube/convert-playlist/${playlistId}`;
+				form(action=actionStr method="post")
+					input(type="hidden" name="title" value=title)
+					input(type="hidden" name="description" value=description)
+					a(onclick="this.parentNode.submit();") Convert Playlist

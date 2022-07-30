@@ -1,8 +1,10 @@
-mixin playlist(img,title,playlistConversionLink)
+mixin spotifyPlaylist(img,title,playlistId)
 	article(class!=attributes.class)
 		h3= title
 		img(class="playlist-cover__img" src=img.url alt=img.alt width=img.width height=img.height)
 		div(class="controls")
 			div(class="control")
 				i(class="fa-solid fa-arrow-right-arrow-left")
-				a(href=playlistConversionLink target="_top") Convert Playlist
+				- var actionStr = `/spotify/convert-playlist/${playlistId}`;
+				form(action=actionStr method="post")
+					a(onclick="this.parentNode.submit();") Convert Playlist

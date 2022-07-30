@@ -26,7 +26,7 @@ Router.get("/",(req,res) => {
 	4. Add songs retrieved from spotify to newly created playlist
 	5. Return to viewing playlists
 */
-Router.get("/convert-playlist/:playlistID",[getVideosByPlaylistId,createPlaylist,buildSpotifyPlaylist,addToPlaylist],(req,res) => {
+Router.post("/convert-playlist/:playlistID",[getVideosByPlaylistId,createPlaylist,buildSpotifyPlaylist,addToPlaylist],(req,res) => {
 	// After creating body structure of song titles and playlist title and description, 
 	//	reidrect to youtube routes to create playlist 
 	res.redirect("/my-playlists");

@@ -8,7 +8,8 @@ html(lang="en")
 	body
 		h1 View your playlists
 
-		include components/playlist.pug
+		include components/youtube-playlist.pug
+		include components/spotify-playlist.pug
 
 		div(class="playlists")
 			section(class="youtube-playlists")
@@ -17,7 +18,7 @@ html(lang="en")
 					- 
 						var playlist = playlistData.snippet;
 						var thumbnail = playlist.thumbnails["medium"];
-					+playlist({ ...thumbnail, alt: playlist["title"] }, playlist["title"],`/youtube/convert-playlist/${playlist["id"]}`)(class = "youtube-playlist")
+					+youtubePlaylist({ ...thumbnail, alt: playlist["title"] }, playlist["title"],playlist["description"],playlistData["id"])(class = "youtube-playlist")
 					hr
 			section(class="spotify-playlists")
 				h2 Spotify Playlists
@@ -25,5 +26,5 @@ html(lang="en")
 					-
 						var imgs = playlistData.images;
 						var thumbnail = imgs[0];
-					+playlist({ url:thumbnail.url, alt:title, width:300, height:300}, playlistData["name"],`/spotify/convert-playlist/${playlistData["id"]}`)(class = "spotify-playlist")
+					+spotifyPlaylist({ url:thumbnail.url, alt:title, width:300, height:300}, playlistData["name"],playlistData["id"])(class = "spotify-playlist")
 					hr
