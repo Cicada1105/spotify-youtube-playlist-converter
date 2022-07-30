@@ -14,11 +14,11 @@ Router.get("/",(req,res) => {
 });
 /*
 	body structure of new playlist to make.
-	All values will be retrieve from spotify playlist
+	All values will be retrieved from spotify playlist
 	{
 		title:"Playlist Title",
 		description:"Playlist Description",
-		videos: [ "Video Title 1", "Video Title 2", ... ]
+		videoTitles: [ "Video Title 1", "Video Title 2", ... ]
 	}
 */
 Router.post("/create-playlist",[createPlaylist,buildYouTubePlayList,addToPlaylist],(req,res) => {

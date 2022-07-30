@@ -10,6 +10,8 @@ const Router = express.Router();
 const AUTHORIZATION_ENDPOINT = "https://accounts.spotify.com/authorize";
 const TOKEN_SERVER = "https://accounts.spotify.com/api/token";
 const REDIRECT_URI = "http://localhost:8080/spotify/auth/authorize";
+const USER_PROFILE_URI = "https://api.spotify.com/v1/me";
+
 const SCOPES = "playlist-modify-public"
 
 // State - random string to prevent any man in the middle attacks
@@ -31,7 +33,7 @@ Router.get("/authorize", (req,res) => {
 	if (!accessToken && !code)
 		startAuthorizing(res);
 	else
-		getAccessToken(res);
+		getAccessToken(req,res);
 });
 
 function startAuthorizing(res) {
@@ -46,7 +48,7 @@ function startAuthorizing(res) {
 
 	res.redirect(`${AUTHORIZATION_ENDPOINT}?${formattedParams}`);
 }
-function getAccessToken(res) {
+function getAccessToken(req,res) {
 	let params = {
 		grant_type: 'authorization_code',
 		code,
@@ -67,11 +69,30 @@ function getAccessToken(res) {
 		// Reset code
 		code = null;
 		// Redirect to playlists
-		res.redirect("/my-playlists");
+		// res.redirect("/my-playlists");
+		// Get userId
+		getUserId(req,res)
 	}).catch((err) => {
 		console.log(err);
 		res.end();
 	})
 }
 
+function getUserId(req,res) {
+	axios(USER_PROFILE_URI, {
+		headers: {
+			"Authorization": `Bearer ${accessToken}`,
+			"Content-Type": "application/json"
+		}
+	}).then(response => {
+		let user = response.data;
+		// Store user id in cookie to be later accessed for retrieving spotify playlist data
+		res.cookie("user-id",user["id"]);
+		res.redirect("/my-playlists")
+	}).catch(err => {
+		console.log(err);
+		console.log("Error getting Spotify User Id");
+		res.end("Error getting Spotify User Id");
+	})
+}
 module.exports = Router;
