@@ -17,7 +17,7 @@ html(lang="en")
 					- 
 						var playlist = playlistData.snippet;
 						var thumbnail = playlist.thumbnails["medium"];
-					+playlist({ ...thumbnail, alt: playlist["title"] }, playlist["title"])(class = "youtube-playlist")
+					+playlist({ ...thumbnail, alt: playlist["title"] }, playlist["title"],`/youtube/convert-playlist/${playlist["id"]}`)(class = "youtube-playlist")
 					hr
 			section(class="spotify-playlists")
 				h2 Spotify Playlists
@@ -25,5 +25,5 @@ html(lang="en")
 					-
 						var imgs = playlistData.images;
 						var thumbnail = imgs[0];
-					+playlist({ url:thumbnail.url, alt:title, width:300, height:300}, playlistData["name"])(class = "spotify-playlist")
+					+playlist({ url:thumbnail.url, alt:title, width:300, height:300}, playlistData["name"],`/spotify/convert-playlist/${playlistData["id"]}`)(class = "spotify-playlist")
 					hr

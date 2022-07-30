@@ -26,6 +26,11 @@ Router.get("/",(req,res) => {
 Router.post("/create-playlist",[createPlaylist,buildSpotifyPlaylist,addToPlaylist],(req,res) => {
 	res.redirect("/my-playlists");
 });
+Router.post("/convert-playlist/:playlistId",[getSongsByPlaylistId],(req,res) => {
+	// After creating body structure of song titles and playlist title and description, 
+	//	reidrect to youtube routes to create playlist 
+	res.redirect(307,"/youtube/create-playlist");
+});
 
 async function createPlaylist(req,res,next) {
 	let playlist = req.body;
@@ -106,6 +111,42 @@ async function addToPlaylist(req,res,next) {
 
 	// Continue on to next function
 	next();	
+}
+
+async function getSongsByPlaylistId(req,res,next) {
+	let playlistId = req.params["playlistId"];
+
+	let result = await axios.get(`${PLAYLIST_API_URL}/${playlistId}`,{
+		headers: {
+			"Authorization": `Bearer ${req.cookies["spotify-access-token"]}`,
+			"Content-Type": "application/json"
+		}
+	});
+
+	// Retrieve the playlist
+	let playlist = result.data;
+
+	// Retrieve title and description of the playlist
+	let playlistTitle = playlist["name"];
+	let playlistDescription = playlist["description"];
+
+	// Retrieve the tracks and songs from the playlist
+	let tracks = playlist["tracks"];
+	let songs = tracks["items"];
+
+	// Loop through songs, adding titles to array
+	let songTitles = [];
+	songs.forEach(song => songTitles.push(song.track["name"]));
+
+	// Add playlist title and description, and song titles array to body
+	req.body = {
+		title: playlistTitle,
+		description: playlistDescription,
+		songTitles
+	}
+
+	// Continue on to next function
+	next();		
 }
 
 module.exports = Router;

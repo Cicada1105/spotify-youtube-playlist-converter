@@ -24,8 +24,10 @@ Router.get("/",(req,res) => {
 Router.post("/create-playlist",[createPlaylist,buildYouTubePlayList,addToPlaylist],(req,res) => {
 	res.redirect("/my-playlists");
 });
-Router.get("/convert-playlist/:playlistID",[getVideosByPlaystId],(req,res) => {
-	res.redirect("/my-playlists");
+Router.get("/convert-playlist/:playlistID",[getVideosByPlaylistId],(req,res) => {
+	// After creating body structure of song titles and playlist title and description, 
+	//	reidrect to youtube routes to create playlist 
+	res.redirect(303,"/spotify/create-playlist");
 });
 
 async function createPlaylist(req,res,next) {
@@ -86,12 +88,8 @@ async function buildYouTubePlayList(req,res,next) {
 		});
 		// Retrieve the first found youtube video
 		let video = result.data.items[0];
-		// Create a video object containing the videoId of the search result
-		let videoObj = {
-			id: video.id["videoId"]
-		}
 		// Push the newly created video object into the playlist
-		newPlaylist.push(videoObj);
+		newPlaylist.push(video.id["videoId"]);
 	}
 
 	// Remove song title from the body
@@ -105,20 +103,20 @@ async function buildYouTubePlayList(req,res,next) {
 
 async function addToPlaylist(req,res,next) {
 	let playlistId = req.body.playlistId;
-	let videos = req.body.videos;
+	let videosIds = req.body.videos;
 
 	let params = {
 		part: "snippet"
 	};
 	let formattedParams = qs.stringify(params);
 
-	for (let video of videos) {
+	for (let videoId of videosIds) {
 		await axios.post(`${PLAYLIST_API_URL}?${formattedParams}`, {
 			snippet: {
 				playlistId,
 				resourceId: {
 					kind: "youtube#video",
-					videoId: video.id
+					videoId: videoId
 				}
 			}
 		}, {
@@ -132,7 +130,7 @@ async function addToPlaylist(req,res,next) {
 	next();
 }
 
-async function getVideosByPlaystId(req,res,next) {
+async function getVideosByPlaylistId(req,res,next) {
 	let playlistId = req.params["playlistID"];
 
 	let params = {
@@ -156,8 +154,9 @@ async function getVideosByPlaystId(req,res,next) {
 		videoTitles.push(video.snippet["title"]);
 	});
 
-	// Add view titles array to the body of the request
-	req.body.vidoeTitles = videoTitles;
+	// Add video titles array to the body of the request 
+	//	(spotify middleware functions will access songs through "songTitles" body parameter)
+	req.body.songTitles = videoTitles;
 
 	// Continue on to next function
 	next();
