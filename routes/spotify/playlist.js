@@ -5,8 +5,8 @@ const Router = express.Router();
 const qs = require("querystring");
 
 // API URLs
-const SEARCH_API_URL = "https://api.spotify.com/v1/search";
 const USER_PLAYLIST_BASE_URI = "https://api.spotify.com/v1/users";
+const SEARCH_API_URL = "https://api.spotify.com/v1/search";
 
 Router.get("/",(req,res) => {
 	console.log("View Spotify Playlists");
@@ -22,7 +22,7 @@ Router.get("/",(req,res) => {
 		videoTitles: [ "Video Title 1", "Video Title 2", ... ]
 	}
 */
-Router.post("/create-playlist",[createPlaylist],(req,res) => {
+Router.post("/create-playlist",[createPlaylist,buildSpotifyPlaylist],(req,res) => {
 	res.redirect("/my-playlists");
 });
 
@@ -47,6 +47,43 @@ async function createPlaylist(req,res,next) {
 	// Retrieve newly added playlist and store id
 	let newPlaylist = response.data;
 	req.body.playlistId = newPlaylist["id"];
+	console.log(newPlaylist);
+	// Continue on to next function
+	next();
+}
+
+async function buildSpotifyPlaylist(req,res,next) {
+	let videoTitles = req.body["videoTitles"];
+
+	let params = {
+		limit: 5,
+		type: "track"
+	}
+
+	let formattedParams;
+	let newPlaylist = [];
+
+	for (let title of videoTitles) {
+		params['q'] = title;
+		formattedParams = qs.stringify(params);
+
+		let result = await axios(`${SEARCH_API_URL}?${formattedParams}`,{
+			headers: {
+				"Authorization": `Bearer ${req.cookies["spotify-access-token"]}`
+			}
+		});
+
+		// Retrieve searched tracks
+		let tracks = result.data["tracks"];
+		// Obtain the first song matching the query
+		let song = tracks.items[0];
+		// Store unique uri for later adding to newly created playlist
+		let videoObj = {
+			id: song["uri"]
+		}
+		newPlaylist.push(videoObj);
+	}
+	console.log(newPlaylist);
 
 	// Continue on to next function
 	next();
