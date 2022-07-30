@@ -5,7 +5,8 @@ const Router = express.Router();
 const qs = require("querystring");
 
 const PLAYLIST_API_URL = "https://youtube.googleapis.com/youtube/v3/playlists";
-const VIDEO_API_URL = "https://www.googleapis.com/youtube/v3/playlistItems";
+const PLAYLIST_ITEMS_API_URL = "https://www.googleapis.com/youtube/v3/playlistItems";
+const SEARCH_API_URL = "https://www.googleapis.com/youtube/v3/search";
 
 Router.get("/",(req,res) => {
 	console.log("View YouTube Playlists");
@@ -21,6 +22,9 @@ Router.get("/",(req,res) => {
 	}
 */
 Router.post("/create-playlist",[createPlaylist,buildYouTubePlayList,addToPlaylist],(req,res) => {
+	res.redirect("/my-playlists");
+});
+Router.get("/convert-playlist/:playlistID",[getVideosByPlaystId],(req,res) => {
 	res.redirect("/my-playlists");
 });
 
@@ -75,7 +79,7 @@ async function buildYouTubePlayList(req,res,next) {
 
 		formattedParams = qs.stringify(params);
 
-		let result = await axios(`https://www.googleapis.com/youtube/v3/search?${formattedParams}`,{
+		let result = await axios(`${SEARCH_API_URL}?${formattedParams}`,{
 			headers: {
 				"Authorization": `Bearer ${req.cookies["youtube-access-token"]}`
 			}
@@ -109,7 +113,7 @@ async function addToPlaylist(req,res,next) {
 	let formattedParams = qs.stringify(params);
 
 	for (let video of videos) {
-		await axios.post(`${VIDEO_API_URL}?${formattedParams}`, {
+		await axios.post(`${PLAYLIST_API_URL}?${formattedParams}`, {
 			snippet: {
 				playlistId,
 				resourceId: {
@@ -128,5 +132,35 @@ async function addToPlaylist(req,res,next) {
 	next();
 }
 
+async function getVideosByPlaystId(req,res,next) {
+	let playlistId = req.params["playlistID"];
+
+	let params = {
+		part: "snippet",
+		playlistId,
+		maxResults:50
+	};
+	let formattedParams = qs.stringify(params);
+
+	let videoTitles = [];
+
+	let response = await axios(`${PLAYLIST_ITEMS_API_URL}?${formattedParams}`,{
+		headers: {
+			"Authorization": `Bearer ${req.cookies["youtube-access-token"]}`
+		}
+	});
+
+	// Loop through the returned youtube playlist items, adding the titls to the videoTitles array
+	let playlistItems = response.data.items;
+	playlistItems.forEach(video => {
+		videoTitles.push(video.snippet["title"]);
+	});
+
+	// Add view titles array to the body of the request
+	req.body.vidoeTitles = videoTitles;
+
+	// Continue on to next function
+	next();
+}
 
 module.exports = Router;
